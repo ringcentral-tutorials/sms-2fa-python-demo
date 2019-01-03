@@ -26,11 +26,25 @@ To setup a free developer account, click [https://developer/ringcentral.com](her
 * Enter a new password and the verification code then click the Submit button to change the password.
 * Login with a new password.
 
-### Clone the project
+### Clone - Setup - Run the project
 ```
-git clone https://github.com/ringcentral-tutorials/2f-auth-node
+$ git clone https://github.com/ringcentral-tutorials/sms-2fa-python-demo
 
-cd 2f-auth-node
+$ cd sms-2fa-python-demo
 
-npm intall --save
+$ pip install ringcentral
+
+$ pip install python-dotenv
+
+$ pip install Flask==1.0.2
+
+$ cp dotenv .env
+
+FLASK_APP=index.py flask run
 ```
+Remember to add your app client id and client secret as well as account login credentials to the .env file.
+
+Open your Web browser and enter localhost:5000
+
+## RingCentral Python SDK
+The SDK is available at https://github.com/ringcentral/ringcentral-python
