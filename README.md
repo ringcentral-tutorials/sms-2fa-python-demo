@@ -40,7 +40,7 @@ $ pip install Flask==1.0.2
 
 $ cp dotenv .env
 
-FLASK_APP=index.py flask run
+$ FLASK_APP=index.py flask run
 ```
 Remember to add your app client id and client secret as well as account login credentials to the .env file.
 
