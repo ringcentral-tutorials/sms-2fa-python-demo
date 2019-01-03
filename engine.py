@@ -13,7 +13,7 @@ from sqlite3 import Error
 from flask import g
 
 MAX_FAILURE = 2
-#USER_DATABASE = join(dirname(__file__), 'db/users.db')
+
 USER_DATABASE = 'db/users.db'
 def enum(**enums):
     return type('Enum', (), enums)
@@ -23,7 +23,6 @@ ResCode = enum(OK=0,FAILED=1,LOCKED=2,INVALID=3,UNKNOWN=4,MAX_FAILURE=5)
 from dotenv import load_dotenv
 dotenv_path = '.env'
 load_dotenv(dotenv_path)
-platform = None
 
 def getSeed():
     try:

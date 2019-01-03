@@ -1,4 +1,4 @@
-import router
+import engine
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
@@ -6,7 +6,7 @@ app = Flask(__name__)
 @app.route('/')
 @app.route('/index')
 def index():
-    if router.canLogin() is True:
+    if engine.canLogin() is True:
         return render_template('index.html', title='Home')
     else:
         return render_template('signup.html', title='Signup')
@@ -17,28 +17,28 @@ def about():
 
 @app.route('/getseed', methods=['GET'])
 def getSeed():
-  return router.getSeed()
+  return engine.getSeed()
 
 @app.route('/login', methods=['POST'])
 def calllogin():
-    return router.login(request)
+    return engine.login(request)
 
 @app.route('/resetpwd', methods=['POST'])
 def resetPwd():
-    return router.resetPwd(request)
+    return engine.resetPwd(request)
 
 @app.route('/verifypasscode', methods=['POST'])
 def verifyPasscode():
-   return router.verifyPasscode(request)
+   return engine.verifyPasscode(request)
 
 @app.route('/resendcode', methods=['POST'])
 def resendCode():
-   return router.resendCode(request)
+   return engine.resendCode(request)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'GET':
-        router.createTable()
+        engine.createTable()
         return render_template('signup.html', title='Signup')
     else:
-        return router.signup(request)
+        return engine.signup(request)
