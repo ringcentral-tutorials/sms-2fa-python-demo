@@ -34,8 +34,6 @@ $ cd sms-2fa-python-demo
 
 $ pip install ringcentral
 
-$ pip install python-dotenv
-
 $ pip install Flask==1.0.2
 
 $ cp dotenv .env

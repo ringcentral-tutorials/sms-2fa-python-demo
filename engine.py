@@ -1,7 +1,7 @@
 from ringcentral import SDK
 import os
 import json
-#from os.path import join, dirname
+
 from hashlib import sha256
 import math
 import datetime
@@ -20,9 +20,6 @@ def enum(**enums):
 
 ResCode = enum(OK=0,FAILED=1,LOCKED=2,INVALID=3,UNKNOWN=4,MAX_FAILURE=5)
 
-from dotenv import load_dotenv
-dotenv_path = '.env'
-load_dotenv(dotenv_path)
 
 def getSeed():
     try:
@@ -73,7 +70,7 @@ def login(request):
                     maskPhoneNumber += 'X'
                 maskPhoneNumber += "-" + phoneNumber[len(phoneNumber)-4:]
                 message = "Your account is temporarily locked. A verification code was sent to your mobile phone number " + maskPhoneNumber + ". Please enter the verification code to unclock your account."
-                return sendSMSMessage(conn, result[0], message)
+                return sendSMSMessage(conn, result[0], email, message)
             else:
                 seed = result[1] + seedStr
                 hashed = sha256(seed).hexdigest()
@@ -130,7 +127,7 @@ def resetPwd(request):
                     maskPhoneNumber += 'X'
                 maskPhoneNumber += "-" + phoneNumber[len(phoneNumber)-4:]
                 message = "A verification code was sent to your mobile phone number " + maskPhoneNumber + ". Please enter the verification code to reset your password."
-                return sendSMSMessage(conn, result[0], message)
+                return sendSMSMessage(conn, result[0], email, message)
             else:
                 timeStamp = math.floor(time.time())
                 gap = timeStamp - result[2]
@@ -219,7 +216,7 @@ def resendCode(request):
         cur.execute(query)
         result = cur.fetchone()
         message = "Please check your SMS for verification code to unclock your account."
-        return sendSMSMessage(conn, result[0], message)
+        return sendSMSMessage(conn, result[0], email, message)
     except Error as e:
         return databaseError()
 
@@ -242,7 +239,6 @@ def canLogin():
         result = cur.execute(query)
         conn.close()
         if result == None:
-            #createTable()
             return False
         else:
             return True
@@ -273,15 +269,15 @@ def signup(request):
     except Error as e:
         return databaseError()
 
-def sendSMSMessage(conn, toNumber, message):
-    if os.environ.get("ENVIRONMENT_MODE") == "sandbox":
-        rcsdk = SDK(os.environ.get("CLIENT_ID_SB"), os.environ.get("CLIENT_SECRET_SB"), 'https://platform.devtest.ringcentral.com')
-        username = os.environ.get("USERNAME_SB")
-        pwd = os.environ.get("PASSWORD_SB")
+def sendSMSMessage(conn, toNumber, email, message):
+    if os.getenv("ENVIRONMENT_MODE") == "sandbox":
+        rcsdk = SDK(os.getenv("CLIENT_ID_SB"), os.getenv("CLIENT_SECRET_SB"), 'https://platform.devtest.ringcentral.com')
+        username = os.getenv("USERNAME_SB")
+        pwd = os.getenv("PASSWORD_SB")
     else:
-        rcsdk = SDK(os.environ.get("CLIENT_ID_PROD"), os.environ.get("CLIENT_SECRET_PROD"), 'https://platform.ringcentral.com')
-        username = os.environ.get("USERNAME_PROD")
-        pwd = os.environ.get("PASSWORD_PROD")
+        rcsdk = SDK(os.getenv("CLIENT_ID_PROD"), os.getenv("CLIENT_SECRET_PROD"), 'https://platform.ringcentral.com')
+        username = os.getenv("USERNAME_PROD")
+        pwd = os.getenv("PASSWORD_PROD")
     platform = rcsdk.platform()
     try:
         platform.login(username, '', pwd)
@@ -295,21 +291,19 @@ def sendSMSMessage(conn, toNumber, message):
         try:
             ts = time.time()
             timeStamp = str(math.floor(ts))
-            query = "UPDATE users SET code= " + code + ", codeexpiry= " + timeStamp + " WHERE phoneno='" + toNumber + "'";
+            query = "UPDATE users SET code= " + code + ", codeexpiry= " + timeStamp + " WHERE email='" + email + "'";
             cur = conn.cursor()
             cur.execute(query)
             conn.commit()
             conn.close()
-            error = ResCode.LOCKED
-            return createResponse(error, message)
+            return createResponse(ResCode.LOCKED, message)
         except Error as e:
             conn.close()
             return databaseError()
     except Exception as e:
         conn.close()
-        error = ResCode.UNKNOWN
         message = "Cannot send verification code. Please click the Resend button to try again."
-        return createResponse(error, message)
+        return createResponse(ResCode.UNKNOWN, message)
 
 def generateRandomCode(digits):
     range_start = 10**(digits-1)

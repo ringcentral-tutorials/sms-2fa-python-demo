@@ -23,7 +23,7 @@
       ### Requirements
       You must have a RingCentral developer account. If you don't have one, click [here](https://developer.ringcentral.com) to create a free developer account.
 
-      You also have to [create a RingCentral app](https://developer.ringcentral.com/library/getting-started.html) with the "SMS" permissions. And retrieve the AppKey and AppSecret for using with this tutorial.
+      You also have to [create a RingCentral app](https://developer.ringcentral.com/library/getting-started.html) with the "SMS" permissions. And retrieve the Client id and secret for using with this tutorial.
 
   .step(data-title='Project setup', data-file='../README.md', data-highlight='31-39')
     :markdown
@@ -32,19 +32,20 @@
 
   .step(data-title='Set environment', data-file='../dotenv')
     :markdown
-      ### Set environment parameters and run the demo
+      ### Set environment parameters
       ```
       $ cp dotenv .env
       ```
       Add your app client id and client secret as well as account login credentials to the .env file.
       * __Note__: The username is the account number and it is also the phone number we will use to send SMS from. If you want to use another number under this account, you can create a new variable and specify the phone number and use that number for sending SMS instead.
 
+      ### Run the demo
       ```
-      $ php -S localhost:5000
+      $ FLASK_APP=index.py flask run
       ```
       Open your Web browser and enter localhost:5000
 
-  .step(data-title='Web pages and client JavaScript', data-file='../about.html', data-highlight='1-75')
+  .step(data-title='Web pages and client JavaScript', data-file='../templates/about.html', data-highlight='1-75')
     :markdown
       ### Web pages
       In this tutorial, we'll implement 3 pages:
@@ -56,11 +57,11 @@
       __about.html__: this page contains information about this tutorial.
 
       ### Client-side JavaScript files
-      Client-side JavaScript files are located under the __public/js__ folder.
+      Client-side JavaScript files are located under the __static/js__ folder.
 
       We'll implement all functions in the _main.js_ file.
 
-  .step(data-title='Add a signup page', data-file='../signup.html', data-highlight='29-46')
+  .step(data-title='Add a signup page', data-file='../templates/signup.html', data-highlight='29-46')
     :markdown
       ### Add a signup page
       We need a signup page for users to create a user account.
@@ -69,7 +70,7 @@
 
       When the _Submit_ button in the form is clicked, we will use JQuery post function to send a request to the server instead of using the default submit function.
 
-  .step(data-title='Add a login page', data-file='../index.html', data-highlight='29-75')
+  .step(data-title='Add a login page', data-file='../templates/index.html', data-highlight='29-75')
     :markdown
       ### Add a login page
       We also need a login page for users to login.
@@ -78,14 +79,14 @@
 
       When a button in a form is clicked, we will use JQuery post function to send a request to the server instead of using the default submit function.
 
-  .step(data-title='Implement  JavaScript client-side', data-file='../public/js/main.js', data-highlight='1-178')
+  .step(data-title='Implement  JavaScript client-side', data-file='../static/js/main.js', data-highlight='1-178')
     :markdown
       ### Implement JavaScript client-side
-      Now, let's create the _main.js_ file and save it to the __public/js/__ folder.
+      Now, let's create the _main.js_ file and save it to the __static/js/__ folder.
 
       In this file, we will implement all client-side functions to send HTTP requests to our server.
 
-  .step(data-title='Implement signup client-side', data-file='../public/js/main.js', data-highlight='62-97')
+  .step(data-title='Implement signup client-side', data-file='../static/js/main.js', data-highlight='61-96')
     :markdown
       ### Implement signup client-side
       We implement the __signup()__ function which will be called when a user clicks the Submit button on the signup page.
@@ -94,10 +95,10 @@
 
       If the server response with no error, we then launch the main page, which will show the login form. If it is an error, we will pop up an alert dialog with the error message.
 
-  .step(data-title='Implement signup server-side', data-file='../engine.php', data-highlight='259-284')
+  .step(data-title='Implement signup server-side', data-file='../engine.py', data-highlight='248-270')
     :markdown
       ### Implement signup server-side
-      In the __engine.php__ file, we implement the __signup__ function which will be called when a _signup_ request is made from the client-side.
+      In the __engine.py__ file, we implement the __signup__ function which will be called when a _signup_ request is made from the client-side.
 
       Inside the server-side __signup__ function, we will create a new user and insert the user information to the _users.db_ database.
 
@@ -114,7 +115,7 @@
       * __code__: latest sent verification code
       * __codeexpiry__: verification code expiry time
 
-  .step(data-title='Implement login client-side', data-file='../public/js/main.js', data-highlight='20-60')
+  .step(data-title='Implement login client-side', data-file='../static/js/main.js', data-highlight='12-59')
     :markdown
       ### Implement login client-side
       First, we implement the __getSeed__ function which will be called when a user clicks the Submit button on the login form.
@@ -125,14 +126,14 @@
 
       Inside the client-side __login__ function, we will post a _login_ request with the user's email address, the encrypted password and the id of the seed to the server.
 
-  .step(data-title='Implement login server-side - step 1', data-file='../engine.php', data-highlight='64-84')
+  .step(data-title='Implement login server-side - step 1', data-file='../engine.py', data-highlight='24-43')
     :markdown
       ### Implement login server-side - step 1
-      In the __engine.php__ file, we implement the __getSeed__ function which will be called when a _getseed_ request is made from the client-side.
+      In the __engine.py__ file, we implement the __getSeed__ function which will be called when a _getseed_ request is made from the client-side.
 
       Inside the server-side __getSeed__ function, we will generate a seed value and add it to the seeds table in our users database. We then send a response back to the client with the seed id and seed value.
 
-  .step(data-title='Implement login server-side - step 2', data-file='../engine.php', data-highlight='86-107')
+  .step(data-title='Implement login server-side - step 2', data-file='../engine.py', data-highlight='47-58')
     :markdown
       ### Implement login server-side - step 2
       Then we implement the server-side __login__ function which will be called when a _login_ request is made from the client-side.
@@ -141,7 +142,7 @@
 
       Then we read the user's data (phoneno, pwd, failure, locked, code) from the users database identified by the user's email address.
 
-  .step(data-title='Implement login server-side - step 3', data-file='../engine.php', data-highlight='108-139')
+  .step(data-title='Implement login server-side - step 3', data-file='../engine.py', data-highlight='66-103')
     :markdown
       ### Implement login server-side - step 3
       If the user's data is read successfully, we will check if the account is locked or not.
@@ -154,28 +155,28 @@
 
       If the passwords do not match, we will increase the failure count and check if the failure count reaches the MAX_FAILURE (in this demo, this max is set to 3 times) before updating the user database with the new values. Then we send the failure response to the client.
 
-  .step(data-title='Implement the sendSMSMessage function', data-file='../engine.php', data-highlight='295-295')
+  .step(data-title='Implement the sendSMSMessage function', data-file='../engine.py', data-highlight='72-73')
     :markdown
       ### Implement sendSMSMessage function
       When we call the _sendSMSMessage_ function, we pass the following parameters to the function:
-      * - __$db__: the SQLite database handle,
-      * - __$phoneno__: the user's mobile phone number, to which we can send a text message,
-      * - __$email__: the user's email address which we can use to update the user's data in the database,
-      * - __$message__: the message we want to respond to the user who tries to login or to reset password.
+      * - __conn__: the SQLite database connection handler,
+      * - __phoneno__: the user's mobile phone number, to which we can send a text message,
+      * - __email__: the user's email address which we can use to update the user's data in the database,
+      * - __message__: the message we want to respond to the user who tries to login or to reset password.
 
-  .step(data-title='Instantiate the RingCentral Node JS SDK', data-file='../engine.php', data-highlight='296-304')
+  .step(data-title='Instantiate the RingCentral Python SDK', data-file='../engine.py', data-highlight='273-281')
     :markdown
-      ### Instantiate the RingCentral PHP SDK
-      First, we create the SDK instance `$rcsdk` and initialize it with the AppKey and AppSecret.
+      ### Instantiate the RingCentral Python SDK
+      First, we create the SDK instance `rcsdk` and initialize it with the Client id and secret.
 
-      Then we call the `$rcsdk->platform()` function to get the instance of the platform component. The `$platform` instance will be used later to login and call RingCentral APIs.
+      Then we call the `rcsdk.platform()` function to get the instance of the platform component. The `platform` instance will be used later to login and call RingCentral APIs.
 
-  .step(data-title='Login to RingCentral account', data-file='../engine.php', data-highlight='306-315')
+  .step(data-title='Login to RingCentral account', data-file='../engine.py', data-highlight='283-283')
     :markdown
       ### Login to RingCentral account
-      To login RingCentral account, we call the `$platform->login()` function with the account's username and password predefined in the __credentials.php_ file.
+      To login RingCentral account, we call the `platform.login()` function with the account's username and password predefined in the __credentials.php_ file.
 
-  .step(data-title='Send verification code', data-file='../engine.php', data-highlight='316-338')
+  .step(data-title='Send verification code', data-file='../engine.py', data-highlight='284-290')
     :markdown
       ### Generate a verification code
       After we logged in RingCentral account successfully, we generate a random 6-digit verification code.
@@ -192,7 +193,7 @@
       ```
 
       ### Send a SMS message
-      We use the `$platform->post()` function to call the SMS API with the specified parameters:
+      We use the `platform.post()` function to call the SMS API with the specified parameters:
 
       The `from` number is our RingCentral phone number specified in the environment file.
 
@@ -200,14 +201,14 @@
 
       The `text` contains the verification code we generated above.
 
-  .step(data-title='Save the verification code', data-file='../engine.php', data-highlight='324-334')
+  .step(data-title='Save the verification code', data-file='../engine.py', data-highlight='292-299')
     :markdown
       ### Save the verification code
       After we sent the verification code successfully, we generate a timestamp and save the verification code and the timestamp to the user database.
 
       Finally, we send a response back to the client to notify the user that the user account is locked and a verification code was sent to the user's mobile phone number.
 
-  .step(data-title='Unlock a user account - client-side', data-file='../public/js/main.js', data-highlight='99-121')
+  .step(data-title='Unlock a user account - client-side', data-file='../static/js/main.js', data-highlight='98-119')
     :markdown
       ### Unlock a user account - client-side
       When a user's account is locked, we ask the user to provide a verification code to unlock the account before the user can retry to login.
@@ -218,10 +219,10 @@
 
       If we receive an "OK" response from the server, which means the verification code matched with the code we saved in the user database, then we will allow the user to try login again.
 
-  .step(data-title='Unlock a user account - server-side', data-file='../engine.php', data-highlight='142-183')
+  .step(data-title='Unlock a user account - server-side', data-file='../engine.py', data-highlight='162-208')
     :markdown
       ### Unlock a user account - server-side
-      In the __engine.php__ file, we implement the __verifyPasscode__ function which will be called when a _verifypasscode_ request is posted from the client side.
+      In the __engine.py__ file, we implement the __verifyPasscode__ function which will be called when a _verifypasscode_ request is posted from the client side.
 
       Inside the server-side __verifyPasscode__ function, we will read the user's data (locked, code, codeexpiry) identified by the user's email address.
 
@@ -238,7 +239,7 @@
 
       If the codes do not match, we reset the verification code (code=0, codeexpiry=0) and send a response to the user indicating the verification code is invalid. In this demo, the user has to send a new request for a new verification code manually.
 
-  .step(data-title='Reset password - client-side', data-file='../public/js/main.js', data-highlight='148-178')
+  .step(data-title='Reset password - client-side', data-file='../static/js/main.js', data-highlight='147-180')
     :markdown
       ### Reset password - client-side
       Requiring a verification code when a user attempts to change the login password would prevent the account from being taken over by hackers if the account login credentials were compromised.
@@ -249,21 +250,21 @@
 
       We provide two steps to reset a password. The first step is to ask for the user's email address and send it to the server to get a verification code. The second step is when we receive the "OK" response from the server, we will enable the entire form with the new password field and the verification code field.
 
-  .step(data-title='Reset password - server-side', data-file='../engine.php', data-highlight='207-221')
+  .step(data-title='Reset password - server-side', data-file='../engine.py', data-highlight='109-116')
     :markdown
       ### Reset password - server-side
-      In the __engine.php__ file, we implement the __resetPwd__ function which will be called when a _resetpwd_ request is posted from the client side.
+      In the __engine.py__ file, we implement the __resetPwd__ function which will be called when a _resetpwd_ request is posted from the client side.
 
       Inside the server __resetPwd__ function, we will read the user's data (phoneno, code, codeexpiry) identified by the user's email address.
 
       If the user's data is read successfully, we will check if the request is to get a verification code by checking if the _code_ and _pwd_ exist in the request.
 
-  .step(data-title='Send a verification code', data-file='../engine.php', data-highlight='221-228')
+  .step(data-title='Send a verification code', data-file='../engine.py', data-highlight='123-130')
     :markdown
       ### Send a verification code
       If the _code_ and _pwd_ do not exist, it is a request for a verification code. Then we call the __sendSMSMessage__ function to generate a verification code, send it to the user's mobile phone number and send a response to the client.
 
-  .step(data-title='Implement reset password', data-file='../engine.php', data-highlight='228-256')
+  .step(data-title='Implement reset password', data-file='../engine.py', data-highlight='132-158')
     :markdown
       ### Implement reset password
       If the _code_ and the _pwd_ exist, it is a request to set a new password. Then we we will generate a new timestamp and compare it with the _codeexpiry_ to check if the verification is still valid.
@@ -274,7 +275,7 @@
 
       If the codes do not match, we reset the verification code (code=0, codeexpiry=0) and send a response to the user to indicate that the verification code is invalid. In this demo, the user has to send a new request for a new verification code manually.
 
-  .step(data-title='Resend a verification code', data-file='../engine.php', data-highlight='185-205')
+  .step(data-title='Resend a verification code', data-file='../engine.py', data-highlight='210-221')
     :markdown
       ### Resend a verification code
       Every time a user requests for a new verification code, we read the user's mobile phone number from the user database then call the _sendSMSMessage_ function to generate a new verification code, send it to the user and update the user database with the code and code expiration time.
